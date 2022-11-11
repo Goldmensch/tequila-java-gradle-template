@@ -67,5 +67,8 @@ Also, a pull/merge request MUST always state breaking changes and added features
 All commits MUST follow the Conventional Commits specification defined here
 https://www.conventionalcommits.org
 
+However, this template is using an extended version described [here](https://gist.github.com/qoomon/5dfcdf8eec66a051ecd85625518cfd13).
+
+
 
 
