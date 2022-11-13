@@ -20,10 +20,14 @@ Also, this workflow is based on Semantic Versioning.
 
 This workflow has knowledge of 4 different types of branches:
 
-- main branch
-- feat/fix branches
-- sub-main branches
-- version branches
+- main branch -- the branch name MUST be "main"
+- feat/fix branches -- the branch name MUST follow the pattern `[feat/fix]/<branchname>` if directly created from main or `[feat/fix]/<sub-main-branch>/<branchnam>` if created from a sub-main branch
+- sub-main branches -- any branch name except "main" and it MUST NOT include "feat" or "fix"
+- version branches -- only the major version number followed by ".x", eg "1.x"; "5.x"
+  
+Replace `<...>` with your own value, eg. `<branchname>` with "add user managment".
+
+Replace `[.../...]` with one of the values inside, eg. `[feat/fix]` with "feat".
 
 #### The feat/fix branch
 A feat/fix branch has nearly the same usages as the gitflow’s feature branch, except that it is merged directly in the main, a version or a sub-main branch and no development branch is used.
