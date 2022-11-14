@@ -9,3 +9,7 @@ repositories {
 dependencies {
 
 }
+
+tasks {
+    register<tequila.ValidateCommitTask>("validateCommitMessage")
+}
