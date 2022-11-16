@@ -27,6 +27,9 @@ public class ValidateCommitTask extends DefaultTask {
     public static final Pattern HEADER_PATTERN =
             Pattern.compile("^(?<type>\\w+?)(?:\\((?<scope>\\w+?)\\))?!?: (?<message>\\S[^.]*)");
 
+    public static final Pattern MERGE_PATTERN =
+            Pattern.compile("Merge .*");
+
     private final Repository repository = new RepositoryBuilder()
             .setGitDir(new File(getProject().getRootDir(), ".git"))
             .readEnvironment()
@@ -48,6 +51,7 @@ public class ValidateCommitTask extends DefaultTask {
         var rootBranch = repository.resolve("origin/%s".formatted(rootBranch(repository.getBranch())));
         var latestRootCommit = commits(git, log -> log.setMaxCount(1).add(rootBranch)).findFirst().orElse(null);
         commits(git, log -> {if (latestRootCommit != null) log.not(latestRootCommit);})
+                .filter(commit -> !MERGE_PATTERN.matcher(commit.getShortMessage()).matches())
                 .map(this::validate)
                 .filter(Objects::nonNull)
                 .forEach(err -> getState().addFailure(new TaskExecutionException(this, new RuntimeException(err))));
