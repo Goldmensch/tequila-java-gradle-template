@@ -11,5 +11,6 @@ dependencies {
 }
 
 tasks {
-    register<tequila.ValidateCommitTask>("validateCommitMessage")
+    register<tequila.ValidateCommitsGitTask>("validateCommits")
+    register<tequila.ValidateCommitMessageGitTask>("validateCommitMessageGit")
 }
