@@ -2,12 +2,10 @@ plugins {
     java
 }
 
-repositories {
-
-}
-
-dependencies {
-
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(19))
+    }
 }
 
 tasks {
