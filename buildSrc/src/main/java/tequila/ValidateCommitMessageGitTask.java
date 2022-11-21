@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class ValidateCommitMessageGitTask extends DefaultTask {
 
-    public static final Collection<String> TEMPLATE_PROJECT_SCOPES = List.of("gradle", "readme", "git");
+    public static final Collection<String> TEMPLATE_PROJECT_SCOPES = List.of("gradle", "readme", "git", "workflows");
 
     public static final String TEMPLATE_PROJECT_ORIGIN = "Goldmensch/tequila-java-gradle-template.git";
 
@@ -41,7 +41,7 @@ public class ValidateCommitMessageGitTask extends DefaultTask {
     }
 
     @TaskAction
-    public void validateMessage() {
+    public void task() throws Exception {
         var message = ((String) getProject().property("message"));
         if (message == null) {
             throw new IllegalArgumentException("Message must be non null");
