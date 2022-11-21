@@ -14,8 +14,8 @@ public class ValidateCommitsGitTask extends ValidateCommitMessageGitTask {
     public ValidateCommitsGitTask() throws Exception {
     }
 
-    @TaskAction
-    public void validateMessages() throws Exception {
+    @Override
+    public void task() throws Exception {
         var rootBranch = repository.resolve("origin/%s".formatted(rootBranch(repository.getBranch())));
         var latestRootCommit = commits(git, log -> log.setMaxCount(1).add(rootBranch)).findFirst().orElse(null);
         commits(git, log -> {
