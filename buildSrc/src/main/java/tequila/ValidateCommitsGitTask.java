@@ -28,15 +28,19 @@ public class ValidateCommitsGitTask extends ValidateCommitMessageGitTask {
     }
 
     private String validate(RevCommit commit) {
+        getLogger().info("Validating commit: {}", commitDisplayHeader(commit));
         var errors = Stream.concat(validateHeader(commit.getShortMessage()).stream(),
                         validateFooter(commit.getFullMessage()).stream())
                 .collect(Collectors.joining("\n"));
 
         return errors.isEmpty()
                 ? null
-                : "Errors for commit: %s @%s \n %s".formatted(commit.getShortMessage(),
-                commit.getId().abbreviate(7).name(),
+                : "Errors for commit: %s \n %s".formatted(commitDisplayHeader(commit),
                 errors);
+    }
+
+    private String commitDisplayHeader(RevCommit commit) {
+        return "%s @s %s".formatted(commit.getShortMessage(), commit.getId().abbreviate(7).name());
     }
 
     private Stream<RevCommit> commits(Git git, ThrowingConsumer<LogCommand> builder) throws Exception {
