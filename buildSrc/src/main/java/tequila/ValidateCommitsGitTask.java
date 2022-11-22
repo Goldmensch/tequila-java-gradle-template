@@ -15,8 +15,23 @@ public class ValidateCommitsGitTask extends ValidateCommitMessageGitTask {
 
     @Override
     public void task() throws Exception {
+        var validateCommitsBefore = isTemplateRepository(repository)
+                ? "da671f4db3f28d18b140cc2aac91bd836215f45e"
+                : (String) getProject().property("commit.ignoreCommitsBefore");
+
+        System.out.println(repository.getConfig().getString("remote", "origin", "url"));
+
         var rootBranch = rootBranch(repository.getBranch());
         commits(git, log -> {
+            if (validateCommitsBefore != null && !validateCommitsBefore.isBlank()) {
+                var ignoreBeforeCommit = repository.resolve(validateCommitsBefore);
+                if (ignoreBeforeCommit == null) {
+                    throw new IllegalArgumentException("Commit mentioned in 'ignoreBeforeCommit.ignoreCommitsBefore' wasn't found: %s".formatted(
+                            validateCommitsBefore
+                    ));
+                }
+                log.not(ignoreBeforeCommit);
+            }
             if (rootBranch != null) {
                 var rootRef = repository.resolve("origin/%s".formatted(rootBranch(repository.getBranch())));
                 var latestRootCommit = commits(git, logL -> logL.setMaxCount(1).add(rootRef)).findFirst().orElse(null);

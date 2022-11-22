@@ -31,8 +31,8 @@ public class ValidateCommitMessageGitTask extends DefaultTask {
     protected final Collection<String> types = parseList(getProject().property("commit.types"));
 
     protected final Collection<String> scopes = isTemplateRepository(repository)
-            ? parseList(getProject().property("commit.scopes"))
-            : TEMPLATE_PROJECT_SCOPES;
+            ? TEMPLATE_PROJECT_SCOPES
+            : parseList(getProject().property("commit.scopes"));
 
     public ValidateCommitMessageGitTask() throws Exception {
     }
@@ -79,7 +79,7 @@ public class ValidateCommitMessageGitTask extends DefaultTask {
         return errors;
     }
 
-    private boolean isTemplateRepository(Repository repository) {
+    public boolean isTemplateRepository(Repository repository) {
         return repository.getConfig().getString("remote", "origin", "url")
                 .contains(TEMPLATE_PROJECT_ORIGIN);
     }
