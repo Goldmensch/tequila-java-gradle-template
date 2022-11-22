@@ -15,4 +15,4 @@ jobs:
           distribution: temurin
           java-version: 18
       - uses: gradle/gradle-build-action@v2
-      - run: gradle validateCommits
+      - run: gradle validateCommits -i
