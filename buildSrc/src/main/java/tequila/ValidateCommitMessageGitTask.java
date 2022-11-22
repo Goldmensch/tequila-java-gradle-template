@@ -19,7 +19,7 @@ public class ValidateCommitMessageGitTask extends DefaultTask {
     public static final String TEMPLATE_PROJECT_ORIGIN = "goldmensch/tequila-java-gradle-template";
 
     public static final Pattern HEADER_PATTERN =
-            Pattern.compile("^(?<type>\\w+?)(?:\\((?<scope>\\w+?)\\))?!?: (?<message>\\S[^.]*)");
+            Pattern.compile("^(?<type>\\w+?)(?:\\((?<scope>\\w+?)\\))?!?: (?<message>\\S.*[^.])$");
 
     protected final Repository repository = new RepositoryBuilder()
             .setGitDir(new File(getProject().getRootDir(), ".git"))
