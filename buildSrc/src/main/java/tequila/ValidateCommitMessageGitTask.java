@@ -16,7 +16,7 @@ public class ValidateCommitMessageGitTask extends DefaultTask {
 
     public static final Collection<String> TEMPLATE_PROJECT_SCOPES = List.of("gradle", "readme", "git", "workflows");
 
-    public static final String TEMPLATE_PROJECT_ORIGIN = "Goldmensch/tequila-java-gradle-template.git";
+    public static final String TEMPLATE_PROJECT_ORIGIN = "goldmensch/tequila-java-gradle-template";
 
     public static final Pattern HEADER_PATTERN =
             Pattern.compile("^(?<type>\\w+?)(?:\\((?<scope>\\w+?)\\))?!?: (?<message>\\S[^.]*)");
@@ -71,7 +71,7 @@ public class ValidateCommitMessageGitTask extends DefaultTask {
                 errors.add("-> Unkown type '%header'".formatted());
             }
             if (scope != null && !scopes.contains(scope)) {
-                errors.add("-> Unkown scope '%header'".formatted(scope));
+                errors.add("-> Unkown scope '%s'".formatted(scope));
             }
         } else {
             errors.add("Commit header (short commit message) violates conventional commits format.");
@@ -81,6 +81,7 @@ public class ValidateCommitMessageGitTask extends DefaultTask {
 
     public boolean isTemplateRepository(Repository repository) {
         return repository.getConfig().getString("remote", "origin", "url")
+                .toLowerCase()
                 .contains(TEMPLATE_PROJECT_ORIGIN);
     }
 
