@@ -16,13 +16,10 @@ public class ValidateCommitMessageGitTask extends DefaultTask {
 
     public static final Collection<String> TEMPLATE_PROJECT_SCOPES = List.of("gradle", "readme", "git", "workflows");
 
-    public static final String TEMPLATE_PROJECT_ORIGIN = "Goldmensch/tequila-java-gradle-template.git";
+    public static final String TEMPLATE_PROJECT_ORIGIN = "goldmensch/tequila-java-gradle-template";
 
     public static final Pattern HEADER_PATTERN =
-            Pattern.compile("^(?<type>\\w+?)(?:\\((?<scope>\\w+?)\\))?!?: (?<message>\\S[^.]*)");
-
-    public static final Pattern MERGE_PATTERN =
-            Pattern.compile("Merge .*");
+            Pattern.compile("^(?<type>\\w+?)(?:\\((?<scope>\\w+?)\\))?!?: (?<message>\\S.*[^.])$");
 
     protected final Repository repository = new RepositoryBuilder()
             .setGitDir(new File(getProject().getRootDir(), ".git"))
@@ -34,8 +31,8 @@ public class ValidateCommitMessageGitTask extends DefaultTask {
     protected final Collection<String> types = parseList(getProject().property("commit.types"));
 
     protected final Collection<String> scopes = isTemplateRepository(repository)
-            ? parseList(getProject().property("commit.scopes"))
-            : TEMPLATE_PROJECT_SCOPES;
+            ? TEMPLATE_PROJECT_SCOPES
+            : parseList(getProject().property("commit.scopes"));
 
     public ValidateCommitMessageGitTask() throws Exception {
     }
@@ -74,7 +71,7 @@ public class ValidateCommitMessageGitTask extends DefaultTask {
                 errors.add("-> Unkown type '%header'".formatted());
             }
             if (scope != null && !scopes.contains(scope)) {
-                errors.add("-> Unkown scope '%header'".formatted(scope));
+                errors.add("-> Unkown scope '%s'".formatted(scope));
             }
         } else {
             errors.add("Commit header (short commit message) violates conventional commits format.");
@@ -82,20 +79,10 @@ public class ValidateCommitMessageGitTask extends DefaultTask {
         return errors;
     }
 
-    private boolean isTemplateRepository(Repository repository) {
+    public boolean isTemplateRepository(Repository repository) {
         return repository.getConfig().getString("remote", "origin", "url")
+                .toLowerCase()
                 .contains(TEMPLATE_PROJECT_ORIGIN);
-    }
-
-    // assume validated branch naming
-    public String rootBranch(String branch) {
-        var branches = branch.split("/");
-        return switch (branches.length) {
-            case 1, 2 -> "main";
-            case 3 -> branches[1];
-            default -> throw new IllegalArgumentException("Branch doens't follow branch naming conventions.");
-
-        };
     }
 
     protected Collection<String> parseList(Object source) {
