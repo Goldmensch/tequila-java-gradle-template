@@ -3,7 +3,6 @@ package tequila;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.LogCommand;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.gradle.api.tasks.TaskAction;
 
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -16,15 +15,29 @@ public class ValidateCommitsGitTask extends ValidateCommitMessageGitTask {
 
     @Override
     public void task() throws Exception {
-        var rootBranch = repository.resolve("origin/%s".formatted(rootBranch(repository.getBranch())));
-        var latestRootCommit = commits(git, log -> log.setMaxCount(1).add(rootBranch)).findFirst().orElse(null);
+        var rootBranch = rootBranch(repository.getBranch());
         commits(git, log -> {
-            if (latestRootCommit != null) log.not(latestRootCommit);
+            if (rootBranch != null) {
+                var rootRef = repository.resolve("origin/%s".formatted(rootBranch(repository.getBranch())));
+                var latestRootCommit = commits(git, logL -> logL.setMaxCount(1).add(rootRef)).findFirst().orElse(null);
+                if (latestRootCommit != null) log.not(latestRootCommit);
+            }
         })
-                .filter(commit -> !MERGE_PATTERN.matcher(commit.getShortMessage()).matches())
+                .filter(commit -> commit.getParents().length == 1) // ignore merge commits
                 .map(this::validate)
                 .filter(Objects::nonNull)
                 .forEach(this::addErr);
+    }
+
+    // assume validated branch naming
+    public String rootBranch(String branch) {
+        var branches = branch.split("/");
+        return switch (branches.length) {
+            case 1 -> null;
+            case 2 -> "main";
+            case 3 -> branches[1];
+            default -> throw new IllegalArgumentException("Branch doens't follow branch naming conventions.");
+        };
     }
 
     private String validate(RevCommit commit) {

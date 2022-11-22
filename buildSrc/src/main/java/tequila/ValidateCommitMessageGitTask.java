@@ -21,9 +21,6 @@ public class ValidateCommitMessageGitTask extends DefaultTask {
     public static final Pattern HEADER_PATTERN =
             Pattern.compile("^(?<type>\\w+?)(?:\\((?<scope>\\w+?)\\))?!?: (?<message>\\S[^.]*)");
 
-    public static final Pattern MERGE_PATTERN =
-            Pattern.compile("Merge .*");
-
     protected final Repository repository = new RepositoryBuilder()
             .setGitDir(new File(getProject().getRootDir(), ".git"))
             .readEnvironment()
@@ -85,17 +82,6 @@ public class ValidateCommitMessageGitTask extends DefaultTask {
     private boolean isTemplateRepository(Repository repository) {
         return repository.getConfig().getString("remote", "origin", "url")
                 .contains(TEMPLATE_PROJECT_ORIGIN);
-    }
-
-    // assume validated branch naming
-    public String rootBranch(String branch) {
-        var branches = branch.split("/");
-        return switch (branches.length) {
-            case 1, 2 -> "main";
-            case 3 -> branches[1];
-            default -> throw new IllegalArgumentException("Branch doens't follow branch naming conventions.");
-
-        };
     }
 
     protected Collection<String> parseList(Object source) {
