@@ -73,6 +73,36 @@ https://www.conventionalcommits.org
 
 However, this template is using an extended version described [here](https://gist.github.com/qoomon/5dfcdf8eec66a051ecd85625518cfd13).
 
+## Repository settings suggestions
+
+- [x] -> set; left out settings are to be understood as unset
+
+### Branches
+
+- default branch: "main"
+
+#### Branch protection rules
+Pattern: "*" // applies to main, sub-main and version branches
+
+##### Settings
+
+- [x] Require a pull request before merging
+- [x] Require status checks to pass before merging
+  - [x] Require branches to be up to date before merging
+  - Status checks that are required:
+    - build-and-test (source: Github Actions)
+    - validate-commit (source: Github Actions)
+- [x] Require conversation resolution before merging
+- [x] Do not allow bypassing the above settings
+- [x] Allow deletion // depends on the team organization
+
+### Pull Requests
+
+- [x] Allow merge commits
+  - Default: "Default to pull request title and description"
+- [x] Always suggest updating pull request branches
+- [x] Allow auto-merge
+- [x] Automatically delete head branches
 
 
 
